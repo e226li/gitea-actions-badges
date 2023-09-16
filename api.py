@@ -32,23 +32,26 @@ async def root():
 
 
 @app.get("/set_badge/")
-async def set_badge(repo: str, new_badge: str, api_key: str = Security(get_api_key)):
+async def set_badge(repo: str, new_badge: str, branch: str=None, api_key: str = Security(get_api_key)):
     if api_key.rsplit("-", 1)[0] != repo:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="No permissions for repo",
         )
 
-    badge_dict[repo] = new_badge
+    if branch is not None:
+        badge_dict[repo, branch] = new_badge
+    else:
+        badge_dict[repo] = new_badge
     with open("badges.yaml", "w") as f:
         yaml.safe_dump(badge_dict, f)
 
 
 @app.get("/get_badge/")
-async def get_badge(repo: str):
+async def get_badge(repo: str, branch: str=None):
     if repo not in badge_dict.keys():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Repo not found",
         )
-    return RedirectResponse("https://img.shields.io/badge/" + badge_dict[repo])
+    return RedirectResponse("https://img.shields.io/badge/" + badge_dict[repo, branch] if branch is not None else badge_dict[repo])

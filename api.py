@@ -59,4 +59,4 @@ async def get_badge(repo: str, branch: str=None, action: str=None):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Repo not found",
         )
-    return RedirectResponse("https://img.shields.io/badge/" + badge_dict[repo, branch, action] if branch is not None or action is not None else badge_dict[repo])
+    return RedirectResponse("https://img.shields.io/badge/" + (badge_dict[repo, branch, action] if branch is not None or action is not None else badge_dict[repo]))

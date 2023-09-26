@@ -40,7 +40,7 @@ async def set_badge(repo: str, new_badge: str, branch: str=None, action: str=Non
         )
 
     if branch is not None or action is not None:
-        badge_dict[(repo, branch, action)] = new_badge
+        badge_dict[str((repo, branch, action))] = new_badge
     else:
         badge_dict[repo] = new_badge
     with open("badges.yaml", "w") as f:
@@ -49,9 +49,9 @@ async def set_badge(repo: str, new_badge: str, branch: str=None, action: str=Non
 
 @app.get("/get_badge/")
 async def get_badge(repo: str, branch: str=None, action: str=None):
-    if (branch is not None or action is not None and (repo, branch, action) not in badge_dict.keys()) or repo not in badge_dict.keys():
+    if (branch is not None or action is not None and str((repo, branch, action)) not in badge_dict.keys()) or repo not in badge_dict.keys():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Badge not found",
         )
-    return RedirectResponse("https://img.shields.io/badge/" + (badge_dict[(repo, branch, action)] if branch is not None or action is not None else badge_dict[repo]))
+    return RedirectResponse("https://img.shields.io/badge/" + (badge_dict[str((repo, branch, action))] if branch is not None or action is not None else badge_dict[repo]))

@@ -49,7 +49,7 @@ async def set_badge(repo: str, new_badge: str, branch: str=None, action: str=Non
 
 @app.get("/get_badge/")
 async def get_badge(repo: str, branch: str=None, action: str=None):
-    if (branch is not None or action is not None and str((repo, branch, action)) not in badge_dict.keys()) or repo not in badge_dict.keys():
+    if str((repo, branch, action)) not in badge_dict.keys()) and repo not in badge_dict.keys():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Badge not found",
